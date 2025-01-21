@@ -1,0 +1,16 @@
+﻿@page "/errorTest"
+@using MinimalAPIAuth.Client.Components
+@rendermode InteractiveServer
+
+<PageTitle>Error Test</PageTitle>
+
+<h1>Error Test</h1>
+
+<ErrorBoundary>
+    <ChildContent>
+        <EmbeddedCounter />
+    </ChildContent>
+    <ErrorContent>
+        <p class="errorUI">😈 A rotten gremlin got us. Sorry!</p>
+    </ErrorContent>
+</ErrorBoundary>

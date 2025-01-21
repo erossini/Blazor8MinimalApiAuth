@@ -1,0 +1,72 @@
+﻿@page "/counter"
+@inject HttpClient httpClient
+@using Microsoft.AspNetCore.Authorization
+@using System.Text.Json
+@rendermode InteractiveAuto
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<AuthorizeView>
+    <Authorized>
+        Hello @context.User.Identity?.Name!
+    </Authorized>
+    <NotAuthorized>
+        User not logged in
+    </NotAuthorized>
+</AuthorizeView>
+
+<p role="status">Current count: @currentCount</p>
+
+@if(isLoading) {
+    <p>
+        Loading data...
+    </p>
+}
+
+<ErrorBoundary>
+    <ChildContent>
+        <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    </ChildContent>
+    <ErrorContent>
+        <p class="errorUI">😈 @showError</p>
+    </ErrorContent>
+</ErrorBoundary>
+
+@if(!string.IsNullOrEmpty(showError)) {
+    <div id="blazor-error-ui" data-nosnippet>
+        Error: @showError
+        <a class="dismiss">🗙</a>
+    </div>
+}
+
+@if(!string.IsNullOrEmpty(showData)) {
+    <hr />
+    @showData
+}
+
+@code {
+    private int currentCount = 0;
+    private bool isLoading = false;
+    private string? showError;
+    private string? showData;
+
+    private async Task IncrementCount()
+    {
+        currentCount++;
+
+        showData = "";
+        isLoading = true;
+        StateHasChanged();
+
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "/api/Client");
+        HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+        responseMessage.EnsureSuccessStatusCode();
+        var rsl = await responseMessage.Content.ReadFromJsonAsync<List<Shared.Models.Client>>();
+        showData = JsonSerializer.Serialize(rsl);
+
+        isLoading = false;
+        StateHasChanged();
+    }
+}
