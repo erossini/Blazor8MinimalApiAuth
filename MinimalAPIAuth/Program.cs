@@ -6,8 +6,21 @@ using MinimalAPIAuth.Components;
 using MinimalAPIAuth.Components.Account;
 using MinimalAPIAuth.Data;
 using MinimalAPIAuth;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region Serilog
+
+Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/min_api-.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+builder.Services.AddSerilog();
+
+#endregion Serilog
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
