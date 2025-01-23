@@ -53,6 +53,25 @@ builder.Services
             client.BaseAddress = new Uri(builder.Configuration["FrontUrl"]);
         });
 
+#region Add CORS
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    var list = builder.Configuration.GetSection("CORS:urls").Get<List<string>>();
+    if (list != null)
+    {
+        options.AddPolicy(name: MyAllowSpecificOrigins,
+                     policy =>
+                     {
+                         policy.WithOrigins(list?.ToArray());
+                     });
+    }
+
+});
+
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,6 +92,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 };
+
+#region Add CORS
+
+app.UseCors(MyAllowSpecificOrigins);
+
+#endregion
 
 app.UseHttpsRedirection();
 
