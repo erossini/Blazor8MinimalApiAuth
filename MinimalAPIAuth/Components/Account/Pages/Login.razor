@@ -1,8 +1,9 @@
 ﻿@page "/Account/Login"
-
+@layout LoginLayout
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
+@using MinimalAPIAuth.Components.Layout
 @using MinimalAPIAuth.Data
 
 @inject SignInManager<ApplicationUser> SignInManager
