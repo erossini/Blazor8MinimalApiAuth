@@ -7,9 +7,22 @@ using MinimalAPIAuth.Components.Account;
 using MinimalAPIAuth.Data;
 using MinimalAPIAuth;
 using Serilog;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region Read configuration files
+
+IHostEnvironment env = builder.Environment;
+
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+
+builder.Services.TryAddScoped<IWebAssemblyHostEnvironment, ServerHostEnvironment>();
+
+#endregion Read configuration files
 #region Serilog
 
 Log.Logger = new LoggerConfiguration()
